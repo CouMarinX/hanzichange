@@ -9,8 +9,8 @@ app = Flask(__name__)
 
 # 自定义 TransformerBlock
 class TransformerBlock(tf.keras.layers.Layer):
-    def __init__(self, embed_dim, num_heads, ff_dim, rate=0.1):
-        super(TransformerBlock, self).__init__()
+    def __init__(self, embed_dim, num_heads, ff_dim, rate=0.1, **kwargs):
+        super(TransformerBlock, self).__init__(**kwargs)
         self.att = tf.keras.layers.MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
         self.ffn = tf.keras.Sequential([
             tf.keras.layers.Dense(ff_dim, activation="relu"),
@@ -30,7 +30,11 @@ class TransformerBlock(tf.keras.layers.Layer):
         return self.layernorm2(out1 + ffn_output)
 
 # 加载TensorFlow模型
-custom_objects = {'TransformerBlock': TransformerBlock}
+from tensorflow.keras.losses import MeanSquaredError
+custom_objects = {
+    'TransformerBlock': TransformerBlock,
+    'mse': MeanSquaredError()
+}
 model = tf.keras.models.load_model('transformer_model.h5', custom_objects=custom_objects)
 
 # 将汉字转为16x16二维数组的示例函数
