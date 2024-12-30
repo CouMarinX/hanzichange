@@ -5,7 +5,7 @@ from tensorflow.keras.optimizers import Adam
 import numpy as np
 import ast
 
-# Read dataset from files
+# 从文件中读取数据集
 def load_data(input_file, target_file):
     with open(input_file, "r") as f:
         inputs = np.array(ast.literal_eval(f.read()), dtype=np.float32)
@@ -13,10 +13,14 @@ def load_data(input_file, target_file):
         targets = np.array(ast.literal_eval(f.read()), dtype=np.float32)
     return inputs, targets
 
-# Custom Transformer block
+# 自定义Transformer模块
 class TransformerBlock(tf.keras.layers.Layer):
     def __init__(self, embed_dim, num_heads, ff_dim, rate=0.1, **kwargs):
         super(TransformerBlock, self).__init__(**kwargs)
+        self.embed_dim = embed_dim
+        self.num_heads = num_heads
+        self.ff_dim = ff_dim
+        self.rate = rate
         self.att = MultiHeadAttention(num_heads=num_heads, key_dim=embed_dim)
         self.ffn = tf.keras.Sequential([
             Dense(ff_dim, activation="relu"),
@@ -35,7 +39,21 @@ class TransformerBlock(tf.keras.layers.Layer):
         ffn_output = self.dropout2(ffn_output, training=training)
         return self.layernorm2(out1 + ffn_output)
 
-# Transformer-based model
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            'embed_dim': self.embed_dim,
+            'num_heads': self.num_heads,
+            'ff_dim': self.ff_dim,
+            'rate': self.rate,
+        })
+        return config
+
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config)
+
+# 基于Transformer的模型
 def build_model(input_shape, output_dim, num_heads=4, num_layers=2, ff_dim=64, rate=0.1):
     inputs = Input(shape=input_shape)
     x = inputs
@@ -45,18 +63,19 @@ def build_model(input_shape, output_dim, num_heads=4, num_layers=2, ff_dim=64, r
     model = Model(inputs=inputs, outputs=outputs)
     return model
 
-# Training function
+# 训练函数
 def train_model(model, inputs, targets, epochs=10, batch_size=1):
     model.compile(optimizer=Adam(learning_rate=0.001), loss="mse")
     model.fit(inputs, targets, epochs=epochs, batch_size=batch_size, verbose=1)
 
-# Main entry
+# 主函数入口
 if __name__ == "__main__":
-    input_file = "output/base_character.txt"
-    target_file = "output/new_character.txt"
+    input_file = "output/base_character1.txt"
+    target_file = "output/new_character1.txt"
     inputs, targets = load_data(input_file, target_file)
 
-    model = build_model(input_shape=(16, 16), output_dim=16)
+    # 修改输入和输出形状为64x64
+    model = build_model(input_shape=(64, 64), output_dim=64)
     train_model(model, inputs, targets, epochs=10, batch_size=16)
-    model.save("transformer_model1.keras")
-    print("Model saved as transformer_model1.keras")
+    model.save("transformer_model_64x64.keras")
+    print("Model saved as transformer_model_64x64.keras")
