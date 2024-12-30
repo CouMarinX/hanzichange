@@ -74,7 +74,7 @@ def save_results_as_array(results, output_dir="output"):
         nf.write("]\n")
 
 if __name__ == "__main__":
-    characters_to_check = [chr(i) for i in range(0x4e00, 0x5e00)]  # 缩小常用汉字范围进行测试
+    characters_to_check = [chr(i) for i in range(0x4e00, 0x9e00)]  # 缩小常用汉字范围进行测试
     results = []
 
     print("Processing, this might take a while...")

@@ -1,7 +1,7 @@
 import tensorflow as tf  # 导入TensorFlow库
-from tensorflow.keras.models import Model  # 导入Keras模型基类
-from tensorflow.keras.layers import Input, Dense, LayerNormalization, MultiHeadAttention, Dropout  # 导入必要的层
-from tensorflow.keras.optimizers import Adam  # 导入Adam优化器
+from tensorflow.keras.models import Model  # type: ignore # 导入Keras模型基类
+from tensorflow.keras.layers import Input, Dense, LayerNormalization, MultiHeadAttention, Dropout  # type: ignore # 导入必要的层
+from tensorflow.keras.optimizers import Adam  # type: ignore # 导入Adam优化器
 import numpy as np  # 导入NumPy库
 import ast  # 导入ast库解析txt格式
 
