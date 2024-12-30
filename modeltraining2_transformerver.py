@@ -66,4 +66,10 @@ if __name__ == "__main__":  # 主函数入口
     # Save the trained model
     model.save("transformer_model.h5")  # 保存模型到当前文件夹，文件名为transformer_model.h5
 
+    model.save('transformer_model1.keras')
     print("Model saved as transformer_model.h5")
+
+
+# 在训练代码的最后添加
+model_loaded = tf.keras.models.load_model('transformer_model.h5', custom_objects={'TransformerBlock': TransformerBlock})
+print(model_loaded.summary())

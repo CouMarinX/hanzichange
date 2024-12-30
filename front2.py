@@ -31,9 +31,10 @@ class TransformerBlock(tf.keras.layers.Layer):
 
 # 加载TensorFlow模型
 from tensorflow.keras.losses import MeanSquaredError
+
 custom_objects = {
     'TransformerBlock': TransformerBlock,
-    'mse': MeanSquaredError()
+    'mse': tf.keras.losses.MeanSquaredError
 }
 model = tf.keras.models.load_model('transformer_model.h5', custom_objects=custom_objects)
 
@@ -62,8 +63,9 @@ def generate():
     # 转换汉字为二维数组并进行预测
     images = []
     for char in chars:
+        # 修改输入数据形状
         input_array = char_to_16x16_array(char)
-        input_array = input_array.reshape(1, 16, 16, 1)  # 调整为模型输入维度
+        input_array = input_array.reshape(1, 16, 16)  # 调整为模型输入维度
         predicted_array = model.predict(input_array)
         predicted_array = predicted_array.squeeze()
 
